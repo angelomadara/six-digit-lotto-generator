@@ -10,13 +10,20 @@ class GenerateController extends Controller
     public function __construct(public LottoResultsRepository $lotto)
     {
     }
+
     public function index(Request $request)
     {
         $isPredict = $request->predict;
+        $isCheckCombinations = $request->checkCombinations;
 
         $lotto_numbers = [];
+        if ($isPredict) {
+            $lotto_numbers = $this->lotto->generateThreeCombinations($isPredict);
+        }
 
-        $lotto_numbers = $this->lotto->generateThreeCombinations($isPredict);
+        if ($isCheckCombinations) {
+            $lotto_numbers = $this->lotto->checkIfCombinationsExist($request->only('combination_0', 'combination_1', 'combination_2'));
+        }
 
         return view('index', [
             'lotto_numbers' => $lotto_numbers

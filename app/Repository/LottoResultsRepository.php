@@ -10,6 +10,14 @@ class LottoResultsRepository extends RepositoryAbstract
 
     public function create()
     {
+    }
+
+    public function update($model, array $post)
+    {
+    }
+
+    public function createCombination()
+    {
         $lotto_numbers = [];
 
         $x = 1;
@@ -24,34 +32,24 @@ class LottoResultsRepository extends RepositoryAbstract
 
         sort($lotto_numbers);
 
-        $json_string = json_encode($lotto_numbers);
-        // check if the combination already exist
-        if (!$this->checkIfCombinationsExist($json_string)) {
-            LottoResults::create([
-                'result' => $json_string
-            ]);
-
-            return $lotto_numbers;
-        }
-        return false;
-    }
-
-    public function update($model, array $post)
-    {
+        return $lotto_numbers;
     }
 
     public function generateThreeCombinations($isPredict)
     {
         if ($isPredict) {
-            $count = 0;
+            $count = 1;
             $max = 3;
+            $lotto_numbers = [];
             // check if the create method returns false then loop again
             // this allows us to check if the combination exist or not on the database
             do {
-                $combinations = $this->create();
+                $combinations = $this->createCombination();
                 if ($combinations != false) {
-                    $lotto_numbers[] = $combinations;
-                    $count++;
+                    $lotto_numbers[] = [
+                        'combination' => $combinations,
+                    ];
+                    ++$count;
                 }
             } while ($count <= $max);
 
@@ -60,13 +58,25 @@ class LottoResultsRepository extends RepositoryAbstract
         return false;
     }
 
-    private function checkIfCombinationsExist($combination)
+    public function checkIfCombinationsExist($combinations)
     {
-        return LottoResults::where(['result' => $combination])->first();
+        $data = [];
+        foreach ($combinations as $combination) {
+            $array_combination = str_replace(['"', "\\"], '', json_encode(arrayCombination($combination)));
+            $doesExist = LottoResults::where(['result' => $array_combination])->first();
+            // $a[] = $doesExist;
+            $data[] = [
+                'combination' => arrayCombination($combination),
+                'is_selected_before' => $doesExist ? true : false,
+                'date_selected' => $doesExist ? $doesExist->created_at : null
+            ];
+        }
+        return $data;
     }
 
     private function randomNumber()
     {
-        return rand(1, 59);
+        $random = rand(1, 59);
+        return $random;
     }
 }
