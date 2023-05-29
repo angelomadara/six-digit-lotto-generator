@@ -8,8 +8,9 @@ class LottoResultsRepository extends RepositoryAbstract
 {
     private $max_numbers = 6; // the maximum number of lotto numbers
 
-    public function create()
+    public function create($data)
     {
+        LottoResults::insert($data);
     }
 
     public function update($model, array $post)
@@ -66,7 +67,7 @@ class LottoResultsRepository extends RepositoryAbstract
         foreach ($combinations as $combination) {
             $array_combination = str_replace(['"', "\\"], '', json_encode(arrayCombination($combination)));
             $doesExist = LottoResults::where(['result' => $array_combination])->first();
-            // $a[] = $doesExist;
+
             $data[] = [
                 'combination' => arrayCombination($combination),
                 'is_selected_before' => $doesExist ? true : false,
@@ -79,7 +80,7 @@ class LottoResultsRepository extends RepositoryAbstract
         }
 
         if ($save) {
-            LottoResults::insert($saveData);
+            $this->create($saveData);
         }
 
         return $data;
