@@ -28,13 +28,16 @@
 
                     @forelse ($lotto_numbers as $key => $numbers)
                     <div class="row justify-content-center">
-                        <div class="col-4">
+                        <div class="col-6 mb-4">
                             <input type="text" name="{{ "combination_".$key }}" value="{{ readableCombination($numbers['combination']) }}" class="form-control">
-                        </div>
-                        <div class="col-4">
+
                             @if(isset($numbers['is_selected_before']) && $numbers['is_selected_before'])
                                 <div class="alert alert-danger" role="alert">
                                     &#9746; this combination has been selected before ({{ date("d/M/Y",strtotime($numbers['date_selected'])) }})
+                                </div>
+                            @elseif(isset($numbers['is_selected_before']))
+                                <div class="alert alert-success" role="alert">
+                                    &#9745; This combination is new
                                 </div>
                             @endif
                         </div>
@@ -44,7 +47,7 @@
 
                     <div style="position:relative;height:50px;">
                         <input type="hidden" name="checkCombinations" value="true">
-                        <button type="submit" class="btn btn-primary position-absolute top-50 start-50 translate-middle">Submit</button>
+                        <button type="submit" class="btn btn-primary position-absolute top-50 start-50 translate-middle">Submit and check combinations</button>
                     </div>
                 </form>
             </div>

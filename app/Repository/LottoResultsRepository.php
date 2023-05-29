@@ -61,6 +61,8 @@ class LottoResultsRepository extends RepositoryAbstract
     public function checkIfCombinationsExist($combinations)
     {
         $data = [];
+        $save = true;
+        $saveData = [];
         foreach ($combinations as $combination) {
             $array_combination = str_replace(['"', "\\"], '', json_encode(arrayCombination($combination)));
             $doesExist = LottoResults::where(['result' => $array_combination])->first();
@@ -70,7 +72,16 @@ class LottoResultsRepository extends RepositoryAbstract
                 'is_selected_before' => $doesExist ? true : false,
                 'date_selected' => $doesExist ? $doesExist->created_at : null
             ];
+            $saveData[] = ['result' => $array_combination, 'created_at' => date("Y-m-d h:i:s"), 'updated_at' => date("Y-m-d h:i:s")];
+            if ($doesExist) {
+                $save = false;
+            }
         }
+
+        if ($save) {
+            LottoResults::insert($saveData);
+        }
+
         return $data;
     }
 
