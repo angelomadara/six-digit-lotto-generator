@@ -13,13 +13,13 @@ class GenerateController extends Controller
 
     public function index(Request $request)
     {
-        $isPredict = $request->predict;
+        // $isPredict = $request->predict;
         $isCheckCombinations = $request->checkCombinations;
 
         $lotto_numbers = [];
-        if ($isPredict) {
-            $lotto_numbers = $this->lotto->generateThreeCombinations($isPredict);
-        }
+        // if ($isPredict) {
+        $lotto_numbers = $this->lotto->generateThreeCombinations(true);
+        // }
 
         if ($isCheckCombinations) {
             // this has to be validated check if the combinations contains only numbers and dont have any random characters

@@ -19,7 +19,7 @@
         <div class="container">
             <div class="block">
                 <form action="/" method="get" id="predict-form" style="position: relative;height:100px;">
-                    <input type="hidden" name="predict" value="true">
+                    {{-- <input type="hidden" name="predict" value="true"> --}}
                     <button type="submit" class="btn btn-primary position-absolute top-50 start-50 translate-middle">Generate</button>
                 </form>
             </div>
