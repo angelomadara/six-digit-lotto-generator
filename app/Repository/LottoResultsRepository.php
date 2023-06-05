@@ -52,6 +52,7 @@ class LottoResultsRepository extends RepositoryAbstract
                         'combination' => $combinations,
                         'is_selected_before' => NULL,
                         'date_selected' => NULL,
+                        'duplicate_in_combination' => false
                     ];
                     ++$count;
                 }
@@ -65,7 +66,6 @@ class LottoResultsRepository extends RepositoryAbstract
     public function checkIfCombinationsExist($combinations)
     {
         $data = [];
-        $save = true;
         $saveData = [];
 
         // check if the combination has the same combination in the array
@@ -73,46 +73,51 @@ class LottoResultsRepository extends RepositoryAbstract
 
         // check if the combination exist in the database
         foreach ($combinations as $combination) {
-
-            $_arr_combination = explode("-", $combination); // tranform the string into a array
-            $unique_combinations = array_unique($_arr_combination);
+            $save = true;
+            $duplicate_in_combination = false;
             $message = "";
-            // check if there is a duplicate number in the combination
-            if (count($unique_combinations) < 6) {
-                $message = "There is a duplicate number in this combination. ";
-            }
 
             $array_combination = str_replace(['"', "\\"], '', json_encode(arrayCombination($combination)));
             // \Log::info($array_combination);
             $doesExist = LottoResults::where(['result' => $array_combination])->first();
 
             if ($doesExist) {
-                \Log::info($doesExist);
-                $message .= "This combination(s) has been selected before - " . date("d/M/Y", strtotime($doesExist->created_at));
+                // \Log::info($doesExist);
+                $message = "This combination(s) has been selected before - " . date("d/M/Y", strtotime($doesExist->created_at));
             } else {
-                $message .= "This combination is new - " . date("d/M/Y");
+                $message = "This combination is new - " . date("d/M/Y");
+            }
+
+            $_arr_combination = explode(" - ", $combination); // tranform the string into a array
+            $unique_combinations = array_unique($_arr_combination);
+            \Log::info(['duplicate', count($_arr_combination), $unique_combinations]);
+            // check if there is a duplicate number in the combination
+            if (count($unique_combinations) < 6) {
+
+                $save = false;
+                $duplicate_in_combination = true;
+                $message = "There is a duplicate number in this combination. ";
             }
 
             $data[] = [
                 'combination' => arrayCombination($combination),
                 'is_selected_before' => $doesExist ? true : false,
+                'duplicate_in_combination' => $duplicate_in_combination,
                 'date_selected' => $doesExist ? $doesExist->created_at : null,
                 'message' => $message,
             ];
 
-            if (!$doesExist) {
-                // $save = false;
-                // break;
+            if (!$doesExist && $duplicate_in_combination == false) {
                 $saveData[] = ['result' => $array_combination, 'created_at' => date("Y-m-d h:i:s"), 'updated_at' => date("Y-m-d h:i:s")];
             }
         }
+        // \Log::info([
+        //     'save' => $saveData
+        // ]);
 
-        // \Log::info($data);
-        // return json_encode($save);
-
-        if ($save) {
-            $this->create($saveData);
-        }
+        // if ($save) {
+        $this->create($saveData);
+        // }
 
         return $data;
     }

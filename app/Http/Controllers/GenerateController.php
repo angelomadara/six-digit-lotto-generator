@@ -13,19 +13,15 @@ class GenerateController extends Controller
 
     public function index(Request $request)
     {
-        // return $this->lotto->checkIfCombinationsExist($request->only('combination_0', 'combination_1', 'combination_2'));
-        // $isPredict = $request->predict;
         $isCheckCombinations = $request->checkCombinations;
 
         $lotto_numbers = [];
-        // if ($isPredict) {
-        $lotto_numbers = $this->lotto->generateThreeCombinations(true);
-        // \Log::info($request->only('combination_0', 'combination_1', 'combination_2'));
-        // }
 
         if ($isCheckCombinations) {
             // this has to be validated check if the combinations contains only numbers and dont have any random characters
             $lotto_numbers = $this->lotto->checkIfCombinationsExist($request->only('combination_0', 'combination_1', 'combination_2'));
+        } else {
+            $lotto_numbers = $this->lotto->generateThreeCombinations(true);
         }
         // return $lotto_numbers;
 

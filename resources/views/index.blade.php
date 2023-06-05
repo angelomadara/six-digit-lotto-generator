@@ -36,13 +36,13 @@
                                 style="border:none;font-size:2rem;"
                             >
 
-                            @if($numbers['is_selected_before'] == true)
+                            @if($numbers['is_selected_before'] == true || $numbers['duplicate_in_combination'] == true)
                                 <div class="alert alert-danger text-center" role="alert">
                                     {{ $numbers['message'] }}
                                 </div>
                             @endif
 
-                            @if($numbers['is_selected_before'] == false && Request::get("checkCombinations"))
+                            @if($numbers['is_selected_before'] == false && Request::get("checkCombinations") && $numbers['duplicate_in_combination'] == false)
                                 <div class="alert alert-success text-center" role="alert">
                                     {{ $numbers['message'] }}
                                 </div>
