@@ -20,7 +20,9 @@
             <div class="block">
                 <form action="/" method="get" id="predict-form" style="position: relative;height:100px;">
                     {{-- <input type="hidden" name="predict" value="true"> --}}
-                    <button type="submit" class="btn btn-primary position-absolute top-50 start-50 translate-middle">Generate</button>
+                    <button type="submit" class="btn btn-primary position-absolute top-50 start-50 translate-middle">
+                        Generate new combinations
+                    </button>
                 </form>
             </div>
             <div class="block">
@@ -29,15 +31,21 @@
                     @forelse ($lotto_numbers as $key => $numbers)
                     <div class="row justify-content-center">
                         <div class="col-6 mb-4">
-                            <input type="text" name="{{ "combination_".$key }}" value="{{ readableCombination($numbers['combination']) }}" class="form-control">
+                            <input type="{{ isset($numbers['is_selected_before']) ? 'hidden' : 'text' }}" name="{{ "combination_".$key }}" value="{{ readableCombination($numbers['combination']) }}" class="form-control">
 
-                            @if(isset($numbers['is_selected_before']) && $numbers['is_selected_before'])
+                            @if($numbers['is_selected_before'] == true)
+                                <h3 class="">
+                                    {{ readableCombination($numbers['combination']) }}
+                                </h3>
                                 <div class="alert alert-danger" role="alert">
-                                    &#9746; this combination has been selected before ({{ date("d/M/Y",strtotime($numbers['date_selected'])) }})
+                                    &#9746; this combination(s) has been selected before ({{ date("d/M/Y",strtotime($numbers['date_selected'])) }})
                                 </div>
-                            @elseif(isset($numbers['is_selected_before']))
+                            @elseif($numbers['is_selected_before'] == false)
+                                <h3 class="">
+                                    {{ readableCombination($numbers['combination']) }}
+                                </h3>
                                 <div class="alert alert-success" role="alert">
-                                    &#9745; This combination is new
+                                    &#9745; This combination is new - {{ date("d/M/Y") }}
                                 </div>
                             @endif
                         </div>

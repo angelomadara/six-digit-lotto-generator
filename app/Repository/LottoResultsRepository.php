@@ -50,6 +50,8 @@ class LottoResultsRepository extends RepositoryAbstract
                 if ($combinations != false) {
                     $lotto_numbers[] = [
                         'combination' => $combinations,
+                        'is_selected_before' => NULL,
+                        'date_selected' => NULL,
                     ];
                     ++$count;
                 }
@@ -65,6 +67,9 @@ class LottoResultsRepository extends RepositoryAbstract
         $data = [];
         $save = true;
         $saveData = [];
+
+        // check if the combination has the same combination in the array
+        $combinations = array_unique($combinations);
 
         // check if the combination exist in the database
         foreach ($combinations as $combination) {
@@ -83,11 +88,8 @@ class LottoResultsRepository extends RepositoryAbstract
             }
         }
 
-        // check if the combination has the same combination in the array
-        $check_array_values = array_unique($combinations);
-        if (count($check_array_values) <= 2) {
-            $save = false;
-        }
+        // \Log::info($data);
+        // return json_encode($save);
 
         if ($save) {
             $this->create($saveData);
