@@ -20,7 +20,7 @@ class GenerateController extends Controller
         $lotto_numbers = [];
         // if ($isPredict) {
         $lotto_numbers = $this->lotto->generateThreeCombinations(true);
-        // \Log::info($lotto_numbers);
+        // \Log::info($request->only('combination_0', 'combination_1', 'combination_2'));
         // }
 
         if ($isCheckCombinations) {

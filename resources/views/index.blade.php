@@ -37,23 +37,15 @@
                             >
 
                             @if($numbers['is_selected_before'] == true)
-                                {{-- <h3 class="">
-                                    {{ readableCombination($numbers['combination']) }}
-                                </h3> --}}
                                 <div class="alert alert-danger text-center" role="alert">
-                                    &#9746; this combination(s) has been selected before ({{ date("d/M/Y",strtotime($numbers['date_selected'])) }})
+                                    {{ $numbers['message'] }}
                                 </div>
-                            @else
-                            {{-- <h3 class="">
-                                {{ readableCombination($numbers['combination']) }}
-                            </h3> --}}
                             @endif
 
                             @if($numbers['is_selected_before'] == false && Request::get("checkCombinations"))
-
-                            <div class="alert alert-success" role="alert">
-                                &#9745; This combination is new - {{ date("d/M/Y") }}
-                            </div>
+                                <div class="alert alert-success text-center" role="alert">
+                                    {{ $numbers['message'] }}
+                                </div>
                             @endif
                         </div>
                     </div>
