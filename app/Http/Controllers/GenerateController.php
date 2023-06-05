@@ -27,7 +27,7 @@ class GenerateController extends Controller
             // this has to be validated check if the combinations contains only numbers and dont have any random characters
             $lotto_numbers = $this->lotto->checkIfCombinationsExist($request->only('combination_0', 'combination_1', 'combination_2'));
         }
-
+        // return $lotto_numbers;
 
         return view('index', [
             'lotto_numbers' => $lotto_numbers

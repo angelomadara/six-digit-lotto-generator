@@ -31,22 +31,29 @@
                     @forelse ($lotto_numbers as $key => $numbers)
                     <div class="row justify-content-center">
                         <div class="col-6 mb-4">
-                            <input type="{{ isset($numbers['is_selected_before']) ? 'hidden' : 'text' }}" name="{{ "combination_".$key }}" value="{{ readableCombination($numbers['combination']) }}" class="form-control">
+                            <input type="text" name="{{ "combination_".$key }}" value="{{ readableCombination($numbers['combination']) }}"
+                                class="form-control text-center"
+                                style="border:none;font-size:2rem;"
+                            >
 
                             @if($numbers['is_selected_before'] == true)
-                                <h3 class="">
+                                {{-- <h3 class="">
                                     {{ readableCombination($numbers['combination']) }}
-                                </h3>
-                                <div class="alert alert-danger" role="alert">
+                                </h3> --}}
+                                <div class="alert alert-danger text-center" role="alert">
                                     &#9746; this combination(s) has been selected before ({{ date("d/M/Y",strtotime($numbers['date_selected'])) }})
                                 </div>
-                            @elseif($numbers['is_selected_before'] == false)
-                                <h3 class="">
-                                    {{ readableCombination($numbers['combination']) }}
-                                </h3>
-                                <div class="alert alert-success" role="alert">
-                                    &#9745; This combination is new - {{ date("d/M/Y") }}
-                                </div>
+                            @else
+                            {{-- <h3 class="">
+                                {{ readableCombination($numbers['combination']) }}
+                            </h3> --}}
+                            @endif
+
+                            @if($numbers['is_selected_before'] == false && Request::get("checkCombinations"))
+
+                            <div class="alert alert-success" role="alert">
+                                &#9745; This combination is new - {{ date("d/M/Y") }}
+                            </div>
                             @endif
                         </div>
                     </div>
