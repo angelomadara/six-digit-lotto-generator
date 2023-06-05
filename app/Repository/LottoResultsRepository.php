@@ -19,21 +19,22 @@ class LottoResultsRepository extends RepositoryAbstract
 
     public function createCombination()
     {
-        $lotto_numbers = [];
+        $lotto_number = [];
 
         $x = 1;
         // loop until the maximum number of lotto numbers is met
         do {
+            $new_number = $this->randomNumber();
             // filter if the number is already in the array
-            if (!in_array($this->randomNumber(), $lotto_numbers)) {
-                $lotto_numbers[] = $this->randomNumber();
-                $x++;
+            if (!in_array($new_number, $lotto_number)) {
+                $lotto_number[] = $new_number;
+                ++$x;
             }
         } while ($x <= $this->max_numbers);
 
-        sort($lotto_numbers);
+        sort($lotto_number);
 
-        return $lotto_numbers;
+        return $lotto_number;
     }
 
     public function generateThreeCombinations($isPredict)
@@ -64,6 +65,8 @@ class LottoResultsRepository extends RepositoryAbstract
         $data = [];
         $save = true;
         $saveData = [];
+
+        // check if the combination exist in the database
         foreach ($combinations as $combination) {
             $array_combination = str_replace(['"', "\\"], '', json_encode(arrayCombination($combination)));
             $doesExist = LottoResults::where(['result' => $array_combination])->first();
@@ -76,7 +79,14 @@ class LottoResultsRepository extends RepositoryAbstract
             $saveData[] = ['result' => $array_combination, 'created_at' => date("Y-m-d h:i:s"), 'updated_at' => date("Y-m-d h:i:s")];
             if ($doesExist) {
                 $save = false;
+                break;
             }
+        }
+
+        // check if the combination has the same combination in the array
+        $check_array_values = array_unique($combinations);
+        if (count($check_array_values) <= 2) {
+            $save = false;
         }
 
         if ($save) {
@@ -88,7 +98,13 @@ class LottoResultsRepository extends RepositoryAbstract
 
     private function randomNumber()
     {
-        $random = rand(1, 59);
+        $random = mt_rand(1, 59);
+        // if ($random > 29) {
+        //     $random = rand($random, 59);
+        // } else {
+        //     $random = rand(1, $random);
+        // }
+        $random = sprintf("%02d", $random);
         return $random;
     }
 }
